@@ -1,0 +1,14 @@
+{
+  "name": "music-note-bot",
+  "version": "1.0.0",
+  "description": "A Discord bot for 24/7 music with a note command.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.17.1",
+    "distube": "^4.1.2",
+    "@discordjs/voice": "^0.17.0"
+  }
+}
