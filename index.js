@@ -1,50 +1,32 @@
-// ... (الجزء العلوي من index.js)
+// 1. استدعاء المكتبات المطلوبة (مثل Client)
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { DisTube } = require('distube');
+// ... (بقية المكتبات)
 
-const { joinVoiceChannel } = require('@discordjs/voice'); // تأكد من استدعاء هذه الدالة في البداية
+// 2. تعريف وإعداد البوت (هذا هو السطر المهم الذي يجب أن يكون في البداية)
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        // ... (بقية الـ Intents)
+    ],
+}); 
 
-// ... (بقية الكود)
-
-client.once('ready', () => {
-    console.log(`البوت جاهز! تم تسجيل الدخول باسم ${client.user.tag}`);
-
-    // === 🛠️ منطق الدخول التلقائي 24/7 ===
-    
-    // 1. **ضع هنا معرف (ID) الخادم (السيرفر) الخاص بك.**
-    const GUILD_ID = '1323926281162588190';
-    
-    // 2. **ضع هنا معرف (ID) القناة الصوتية (الروم) التي تريد البوت أن يدخلها.**
-    const VOICE_CHANNEL_ID = '1420820092761014363';
-
-    const targetGuild = client.guilds.cache.get(GUILD_ID);
-
-    if (targetGuild) {
-        const targetChannel = targetGuild.channels.cache.get(VOICE_CHANNEL_ID);
-
-        if (targetChannel && targetChannel.type === 2) { // التحقق من أن النوع هو قناة صوتية (Voice Channel)
-            try {
-                // استخدام joinVoiceChannel للانضمام إلى الروم
-                joinVoiceChannel({
-                    channelId: targetChannel.id,
-                    guildId: targetGuild.id,
-                    adapterCreator: targetGuild.voiceAdapterCreator,
-                    selfDeaf: true, // يفضل كتم صوت البوت ذاتياً
-                });
-                console.log(`✅ انضم البوت تلقائياً إلى الروم: ${targetChannel.name}`);
-                
-                // **ملاحظة إضافية:** بعد الانضمام، يمكنك استخدام player.play() 
-                // لتشغيل قائمة تشغيل 24/7 مباشرة.
-                
-            } catch (error) {
-                console.error('🚫 فشل الانضمام التلقائي للقناة الصوتية:', error);
-            }
-        } else {
-            console.log('🚫 لم يتم العثور على القناة الصوتية المحددة أو المعرف خاطئ.');
-        }
-    } else {
-        console.log('🚫 لم يتم العثور على الخادم (السيرفر) المحدد أو المعرف خاطئ.');
-    }
-    
-    // === نهاية منطق الدخول التلقائي ===
+// 3. تعريف مشغل الموسيقى، باستخدام المتغير "client"
+client.distube = new DisTube(client, {
+    // ...
 });
 
-// ... (بقية الكود)
+// 4. تحميل الأوامر واستخدام المتغير "client"
+client.commands = new Collection();
+// ... (منطق تحميل الأوامر)
+
+// 5. استخدام دالة client.once('ready', ...) في السطر السابع أو ما بعده
+client.once('ready', () => { // <== يجب أن يكون client مُعرَّفاً هنا
+    console.log(`البوت جاهز! تم تسجيل الدخول باسم ${client.user.tag}`);
+    // ... (منطق الدخول التلقائي)
+});
+
+// 6. تسجيل الدخول باستخدام المتغير "client"
+const TOKEN = 'MTM5MDgwNzA4MjQ1Nzg5NTAyMg.GtVvkU.7cBz79Z-Z0Xbv4ent-XlIu0QDGFn-lrmKMPyvI'; 
+client.login(TOKEN);
