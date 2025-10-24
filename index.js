@@ -18,9 +18,9 @@ app.get('/', (req, res) => {
   <center><h1>Bot 24H ON!</h1></center
   </body>`)
 });
-const channelId = '1210233988699131946';
-const guildId = '1011820688228765828'; 
-const Url = 'https://youtu.be/fLkdQeeRtYs?si=02zwuFdQbytcD09f'; 
+const channelId = '1420820092761014363';
+const guildId = '1323926281162588190'; 
+const Url = 'https://www.youtube.com/watch?v=zgp_sFRlECs'; 
 
 client.on('ready', () => {
   console.log(`✅ | Logged in as ${client.user.tag}`);
