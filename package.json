@@ -10,8 +10,8 @@
     "discord.js": "^14.17.1",
     "distube": "^4.2.2",
     "@discordjs/voice": "^0.17.0",
-    "dotenv": "^16.4.5", // مطلوب لقراءة الرمز من البيئة
-    "@distube/spotify": "^1.1.0", // يفضل إضافة دعم سبوتيفاي
+    "dotenv": "^16.4.5",
+    "@distube/spotify": "^1.1.0",
     "fs": "^0.0.1-security",
     "path": "^0.12.7"
   }
