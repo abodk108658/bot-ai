@@ -1,7 +1,7 @@
 {
   "name": "quiran",
   "version": "1.0.0",
-  "description": "quran bot discord voice",
+  "description": "sleep bot discord voice",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js"
