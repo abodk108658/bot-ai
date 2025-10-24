@@ -1,77 +1,50 @@
-// استدعاء المكتبات
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
-const { DisTube } = require('distube');
-const { SpotifyPlugin } = require('@distube/spotify');
-const fs = require('fs');
-const path = require('path');
+// ... (الجزء العلوي من index.js)
 
-// إعداد البوت (Client)
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildVoiceStates, // مهم للتحكم بالقنوات الصوتية
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
-    ],
-});
+const { joinVoiceChannel } = require('@discordjs/voice'); // تأكد من استدعاء هذه الدالة في البداية
 
-// تعريف مشغل الموسيقى (DisTube)
-client.distube = new DisTube(client, {
-    emitNewSongOnly: true,
-    leaveOnFinish: false, // لمنع البوت من المغادرة بعد انتهاء الأغنية
-    leaveOnStop: false,   // لمنع البوت من المغادرة عند أمر الإيقاف
-    plugins: [new SpotifyPlugin()], // إضافة دعم سبوتيفاي اختياريًا
-});
-
-client.commands = new Collection();
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-
-// تحميل ملفات الأوامر
-for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
-    if ('data' in command && 'execute' in command) {
-        client.commands.set(command.data.name, command);
-    } else {
-        console.log(`[تحذير] الأمر في ${filePath} يفتقد خاصية 'data' أو 'execute' المطلوبة.`);
-    }
-}
-
-// **إعداد الأوامر**
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-
-    const command = client.commands.get(interaction.commandName);
-
-    if (!command) {
-        console.error(`لم يتم العثور على أمر يطابق ${interaction.commandName}.`);
-        return;
-    }
-
-    try {
-        await command.execute(interaction, client.distube); // تمرير مشغل الموسيقى للأمر
-    } catch (error) {
-        console.error(error);
-        await interaction.reply({ content: 'حدث خطأ أثناء تنفيذ هذا الأمر!', ephemeral: true });
-    }
-});
-
-// **إعداد DisTube (للتشغيل التلقائي/24-7)**
-client.distube.on('finish', (queue) => {
-    // هذا الجزء يسمح بالتشغيل التلقائي لقائمة جديدة أو العودة إلى أغنية البقاء 24/7
-    // إذا كنت تريد البوت أن يلعب شيئاً محدداً دائماً، ضع هنا قائمة تشغيل 24/7
-    console.log(`انتهت قائمة التشغيل في الخادم ${queue.textChannel.guild.name}.`);
-    // يمكنك إضافة منطق هنا لضمان بقاء البوت في القناة وتشغيل شيء جديد.
-});
-
-// إعداد رمز البوت (التوكن)
-const TOKEN = 'MTM5MDgwNzA4MjQ1Nzg5NTAyMg.GtVvkU.7cBz79Z-Z0Xbv4ent-XlIu0QDGFn-lrmKMPyvI'; 
+// ... (بقية الكود)
 
 client.once('ready', () => {
     console.log(`البوت جاهز! تم تسجيل الدخول باسم ${client.user.tag}`);
-    // يجب تسجيل الأوامر Slash Commands هنا أيضاً باستخدام Discord API
-    // أو استخدم طريقة التسجيل التلقائي التي تفضلها.
+
+    // === 🛠️ منطق الدخول التلقائي 24/7 ===
+    
+    // 1. **ضع هنا معرف (ID) الخادم (السيرفر) الخاص بك.**
+    const GUILD_ID = '1323926281162588190';
+    
+    // 2. **ضع هنا معرف (ID) القناة الصوتية (الروم) التي تريد البوت أن يدخلها.**
+    const VOICE_CHANNEL_ID = '1420820092761014363';
+
+    const targetGuild = client.guilds.cache.get(GUILD_ID);
+
+    if (targetGuild) {
+        const targetChannel = targetGuild.channels.cache.get(VOICE_CHANNEL_ID);
+
+        if (targetChannel && targetChannel.type === 2) { // التحقق من أن النوع هو قناة صوتية (Voice Channel)
+            try {
+                // استخدام joinVoiceChannel للانضمام إلى الروم
+                joinVoiceChannel({
+                    channelId: targetChannel.id,
+                    guildId: targetGuild.id,
+                    adapterCreator: targetGuild.voiceAdapterCreator,
+                    selfDeaf: true, // يفضل كتم صوت البوت ذاتياً
+                });
+                console.log(`✅ انضم البوت تلقائياً إلى الروم: ${targetChannel.name}`);
+                
+                // **ملاحظة إضافية:** بعد الانضمام، يمكنك استخدام player.play() 
+                // لتشغيل قائمة تشغيل 24/7 مباشرة.
+                
+            } catch (error) {
+                console.error('🚫 فشل الانضمام التلقائي للقناة الصوتية:', error);
+            }
+        } else {
+            console.log('🚫 لم يتم العثور على القناة الصوتية المحددة أو المعرف خاطئ.');
+        }
+    } else {
+        console.log('🚫 لم يتم العثور على الخادم (السيرفر) المحدد أو المعرف خاطئ.');
+    }
+    
+    // === نهاية منطق الدخول التلقائي ===
 });
 
-client.login(TOKEN);
+// ... (بقية الكود)
