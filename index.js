@@ -73,7 +73,7 @@ client.once('ready', () => {
 // 6. قائمة التشغيل حقتنا (اضف مقاطعك هنا)
 const CUSTOM_PLAYLIST = [
     'https://www.youtube.com/watch?v=zgp_sFRlECs', 
-    'hhttps://www.youtube.com/watch?v=2CMoyNf4_1M&t=2022s',
+    'https://www.youtube.com/watch?v=2CMoyNf4_1M&t=2022s',
     'اسم اغنية او مقطع للبحث عنه',
     // تقدر تحط اي عدد من الروابط او الاسامي
 ];
