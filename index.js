@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 2. تحديد البادئة (الـ Prefix)
-const PREFIX = '702'; // <== التغيير المطلوب في البادئة هنا
+const PREFIX = '702'; 
 
 // 3. تعريف وإعداد البوت (Client) 
 const client = new Client({
@@ -51,13 +51,15 @@ client.once('ready', () => {
                 });
                 console.log(`✅ دخل البوت القناة: ${targetChannel.name}`);
                 
-                // تشغيل مقطع تمهيدي عشان يثبت في القناة
+                // 🛑 تم تعطيل تشغيل مقطع تمهيدي حاليا عشان ما يطيح البوت بسبب حظر يوتيوب (429)
+                /*
                 const initialMusicLink = 'https://www.youtube.com/watch?v=jRWR0Ob6mLI'; 
                 
                 client.distube.play(targetChannel, initialMusicLink, {
                     textChannel: targetChannel.guild.systemChannel || targetChannel.guild.channels.cache.find(c => c.type === 0),
                     skip: true 
                 }).catch(err => console.error('🚫 ما قدرنا نشغل الموسيقى الاولية:', err));
+                */
                 
             } catch (error) {
                 console.error('🚫 فشل الدخول التلقائي للقناة الصوتية:', error);
@@ -72,10 +74,10 @@ client.once('ready', () => {
 
 // 6. قائمة التشغيل حقتنا (اضف مقاطعك هنا)
 const CUSTOM_PLAYLIST = [
+    // 🛑 تأكد من ان الروابط هنا صحيحة وتم حذف الخطأ الاملائي hhttps://
     'https://www.youtube.com/watch?v=zgp_sFRlECs', 
     'https://www.youtube.com/watch?v=2CMoyNf4_1M&t=2022s',
-    'اسم اغنية او مقطع للبحث عنه',
-    // تقدر تحط اي عدد من الروابط او الاسامي
+    'راشد الماجد - خذ راحتك', 
 ];
 
 
@@ -195,6 +197,12 @@ client.on('messageCreate', async message => {
             message.reply('🚫 ما قدرنا نشغل المقطع العشوائي.');
         }
     }
+});
+
+
+// 9. معالج الاخطاء العامة عشان البوت ما يطيح
+process.on('unhandledRejection', error => {
+    console.error('🚫 صار خطا ما عالجناه:', error);
 });
 
 
