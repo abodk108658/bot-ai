@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "discord.js": "^14.17.1",
-    "distube": "^4.2.2", 
+    "distube": "^5.0.0",
     "@discordjs/voice": "^0.17.0",
     "dotenv": "^16.4.5",
     "@distube/spotify": "^1.1.0",
